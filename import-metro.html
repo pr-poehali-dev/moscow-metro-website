@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Metro Data Import</title>
+</head>
+<body>
+  <h1>Metro Data Import</h1>
+  <button onclick="importData()">Import Data</button>
+  <pre id="output"></pre>
+
+  <script type="module">
+    import { metroLines, metroStations } from './src/lib/metro-data.ts';
+
+    window.importData = async function() {
+      const output = document.getElementById('output');
+      const API_ENDPOINT = 'https://functions.poehali.dev/9ec91258-742b-41c4-9735-af020ee61843';
+
+      // Prepare lines
+      const lines = metroLines.map(line => ({
+        id: line.id,
+        name: line.name,
+        number: line.number,
+        color: line.color
+      }));
+
+      // Prepare stations
+      const stations = metroStations.map(station => ({
+        id: station.id,
+        name: station.name,
+        lineId: station.lineId,
+        order: station.order,
+        hasTransfer: station.hasTransfer
+      }));
+
+      // Extract transfers
+      const transfers = metroStations
+        .filter(station => station.hasTransfer && station.transferTo && station.transferTo.length > 0)
+        .map(station => ({
+          stationId: station.id,
+          transferTo: station.transferTo
+        }));
+
+      const payload = {
+        lines,
+        stations,
+        transfers
+      };
+
+      output.textContent = `Preparing to import metro data...\nLines: ${lines.length}\nStations: ${stations.length}\nTransfers: ${transfers.length}\n\nMaking API call...\n`;
+
+      try {
+        const response = await fetch(`${API_ENDPOINT}?resource=bulk-import`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+        
+        output.textContent += `\nResponse Status: ${response.status}\n`;
+        output.textContent += `Response: ${responseText}\n`;
+        
+        if (response.ok) {
+          try {
+            const result = JSON.parse(responseText);
+            output.textContent += '\nImport Results:\n';
+            output.textContent += JSON.stringify(result, null, 2);
+          } catch (e) {
+            output.textContent += '\nRaw response: ' + responseText;
+          }
+        } else {
+          output.textContent += '\nImport failed with status: ' + response.status;
+        }
+      } catch (error) {
+        output.textContent += '\nError making API request: ' + error.message;
+      }
+    };
+  </script>
+</body>
+</html>

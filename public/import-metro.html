@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Metro Data</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚇 Import Metro Data to Database</h1>
+        <p>Click the button below to import all metro lines and stations into the database.</p>
+        <button id="importBtn" onclick="importData()">Import Metro Data</button>
+        <div id="result"></div>
+    </div>
+
+    <script type="module">
+        const metroLines = [
+          { id: 'sokolnicheskaya', name: 'Сокольническая', color: '#E4002B', number: '1' },
+          { id: 'zamoskvoretskaya', name: 'Замоскворецкая', color: '#2DBE2C', number: '2' },
+          { id: 'arbatsko-pokrovskaya', name: 'Арбатско-Покровская', color: '#0078C9', number: '3' },
+          { id: 'filevskaya', name: 'Филёвская', color: '#19C1F3', number: '4' },
+          { id: 'koltsevaya', name: 'Кольцевая', color: '#894E35', number: '5' },
+          { id: 'kaluzhsko-rizhskaya', name: 'Калужско-Рижская', color: '#F58631', number: '6' },
+          { id: 'tagansko-krasnopresnenskaya', name: 'Таганско-Краснопресненская', color: '#8E479C', number: '7' },
+          { id: 'kalininskaya', name: 'Калининская', color: '#FFCD1C', number: '8' },
+          { id: 'solntsevskaya', name: 'Солнцевская', color: '#FFD702', number: '8А' },
+          { id: 'serpukhovsko-timiryazevskaya', name: 'Серпуховско-Тимирязевская', color: '#999999', number: '9' },
+          { id: 'lyublinsko-dmitrovskaya', name: 'Люблинско-Дмитровская', color: '#B3D445', number: '10' },
+          { id: 'bolshaya-koltsevaya', name: 'Большая кольцевая', color: '#82C0C0', number: '11' },
+          { id: 'butovskaya', name: 'Бутовская', color: '#ACB5BD', number: '12' },
+          { id: 'monorail', name: 'Монорельс', color: '#79CDCD', number: '13' },
+          { id: 'mck', name: 'Московское центральное кольцо', color: '#F59BBB', number: '14' },
+          { id: 'nekrasovskaya', name: 'Некрасовская', color: '#DE64A1', number: '15' },
+          { id: 'troitskaya', name: 'Троицкая', color: '#DD0000', number: '16' },
+          { id: 'rublevo-arkhangelskaya', name: 'Рублево-Архангельская', color: '#FFA8AF', number: '17' },
+          { id: 'biryulevskaya', name: 'Бирюлевская', color: '#A1E9E9', number: '18' },
+          { id: 'd1', name: 'Белорусско-Савёловский диаметр', color: '#F08521', number: 'D1' },
+          { id: 'd2', name: 'Курско-Рижский диаметр', color: '#D375B9', number: 'D2' },
+          { id: 'd3', name: 'Ленинградско-Казанский диаметр', color: '#11C0E7', number: 'D3' },
+          { id: 'd4', name: 'Калужско-Нижегородский диаметр', color: '#B7DD7D', number: 'D4' },
+        ];
+
+        // Sample of first 50 stations (you'll need to add all stations here)
+        const metroStations = [
+          { id: 'sok-0', name: 'Потапово', lineId: 'sokolnicheskaya', hasTransfer: false, transferTo: [], order: 0 },
+          { id: 'sok-1', name: 'Бульвар Рокоссовского', lineId: 'sokolnicheskaya', hasTransfer: false, transferTo: [], order: 1 },
+          { id: 'sok-6', name: 'Комсомольская', lineId: 'sokolnicheskaya', hasTransfer: true, transferTo: ['koltsevaya'], order: 6 },
+        ];
+
+        window.importData = async function() {
+            const btn = document.getElementById('importBtn');
+            const resultDiv = document.getElementById('result');
+            
+            btn.disabled = true;
+            resultDiv.className = 'info';
+            resultDiv.textContent = 'Importing data...';
+            
+            const transfers = metroStations
+                .filter(s => s.hasTransfer && s.transferTo && s.transferTo.length > 0)
+                .map(s => ({ stationId: s.id, transferTo: s.transferTo }));
+            
+            const payload = {
+                lines: metroLines,
+                stations: metroStations.map(s => ({
+                    id: s.id,
+                    name: s.name,
+                    lineId: s.lineId,
+                    order: s.order,
+                    hasTransfer: s.hasTransfer
+                })),
+                transfers: transfers
+            };
+            
+            try {
+                const response = await fetch('https://functions.poehali.dev/9ec91258-742b-41c4-9735-af020ee61843?resource=bulk-import', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'success';
+                    resultDiv.textContent = `✅ Import completed!\n\nLines imported: ${result.lines_imported}\nStations imported: ${result.stations_imported}\nTransfers imported: ${result.transfers_imported}`;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `❌ Import failed:\n${JSON.stringify(result, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
