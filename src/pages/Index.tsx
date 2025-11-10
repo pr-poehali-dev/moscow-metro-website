@@ -166,8 +166,12 @@ export default function Index() {
           </Card>
         </div>
 
-        <Tabs defaultValue="lines" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="map" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="map">
+              <Icon name="Map" size={16} className="mr-2" />
+              Схема метро
+            </TabsTrigger>
             <TabsTrigger value="lines">
               <Icon name="GitBranch" size={16} className="mr-2" />
               Линии метро
@@ -181,6 +185,34 @@ export default function Index() {
               Информация
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="map" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Icon name="Map" className="text-primary" size={24} />
+                  Интерактивная схема метро
+                </CardTitle>
+                <CardDescription>
+                  Полная схема московского метрополитена со всеми линиями и станциями
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="w-full overflow-auto bg-muted rounded-lg p-4">
+                  <img 
+                    src="https://cdn.poehali.dev/files/67d8adfa-b91a-48c4-9732-121055046422.jpg" 
+                    alt="Схема московского метро" 
+                    className="w-full h-auto max-w-full"
+                  />
+                </div>
+                <div className="mt-4 p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    💡 Используйте жесты для увеличения схемы на мобильных устройствах
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="lines" className="space-y-4">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
