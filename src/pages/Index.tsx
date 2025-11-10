@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
-import InteractiveMetroMap from '@/components/InteractiveMetroMap';
 import { metroLines, stations, calculateRoute, type Route, type Station, type Line } from '@/data/metroData';
 
 export default function Index() {
@@ -167,12 +166,8 @@ export default function Index() {
           </Card>
         </div>
 
-        <Tabs defaultValue="map" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="map">
-              <Icon name="Map" size={16} className="mr-2" />
-              Схема метро
-            </TabsTrigger>
+        <Tabs defaultValue="lines" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="lines">
               <Icon name="GitBranch" size={16} className="mr-2" />
               Линии метро
@@ -186,29 +181,6 @@ export default function Index() {
               Информация
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="map">
-            <InteractiveMetroMap
-              selectedFrom={fromStation}
-              selectedTo={toStation}
-              onStationClick={(stationId) => {
-                if (!fromStation) {
-                  setFromStation(stationId);
-                } else if (!toStation && stationId !== fromStation) {
-                  setToStation(stationId);
-                  setTimeout(() => {
-                    const calculatedRoute = calculateRoute(fromStation, stationId);
-                    setRoute(calculatedRoute);
-                  }, 100);
-                } else {
-                  setFromStation(stationId);
-                  setToStation('');
-                  setRoute(null);
-                }
-              }}
-              routePath={route?.stations.map(s => s.id) || []}
-            />
-          </TabsContent>
 
           <TabsContent value="lines" className="space-y-4">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
