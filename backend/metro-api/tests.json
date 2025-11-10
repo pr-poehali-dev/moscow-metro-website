@@ -1,0 +1,46 @@
+{
+  "tests": [
+    {
+      "name": "Get all metro lines",
+      "method": "GET",
+      "path": "/?resource=lines",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Get all stations",
+      "method": "GET",
+      "path": "/?resource=stations",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Bulk import metro data",
+      "method": "POST",
+      "path": "/?resource=bulk-import",
+      "body": {
+        "lines": [
+          {
+            "id": "test-line-bulk",
+            "name": "Тестовая линия",
+            "number": "T1",
+            "color": "#FF0000"
+          }
+        ],
+        "stations": [
+          {
+            "id": "test-station-bulk",
+            "name": "Тестовая станция",
+            "lineId": "test-line-bulk",
+            "order": 1,
+            "hasTransfer": false
+          }
+        ],
+        "transfers": []
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "message": "Import completed"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
