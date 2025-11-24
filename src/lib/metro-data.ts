@@ -40,7 +40,71 @@ export const metroLines: MetroLine[] = [
   { id: 'd4', name: 'Калужско-Нижегородский диаметр', color: '#B7DD7D', number: 'D4' },
 ];
 
+export interface MetroTransfer {
+  stationId: string;
+  transferToLineId: string;
+}
+
+export const metroStationTransfers: MetroTransfer[] = [
+  { stationId: 'sok-1', transferToLineId: 'mck' },
+  { stationId: 'sok-2', transferToLineId: 'mck' },
+  { stationId: 'sok-4', transferToLineId: 'bolshaya-koltsevaya' },
+  { stationId: 'sok-8', transferToLineId: 'lyublinsko-dmitrovskaya' },
+  { stationId: 'sok-8', transferToLineId: 'kaluzhsko-rizhskaya' },
+  { stationId: 'sok-10', transferToLineId: 'zamoskvoretskaya' },
+  { stationId: 'sok-10', transferToLineId: 'arbatsko-pokrovskaya' },
+  { stationId: 'sok-11', transferToLineId: 'arbatsko-pokrovskaya' },
+  { stationId: 'sok-11', transferToLineId: 'filevskaya' },
+  { stationId: 'sok-11', transferToLineId: 'serpukhovsko-timiryazevskaya' },
+  { stationId: 'sok-14', transferToLineId: 'koltsevaya' },
+  { stationId: 'sok-15', transferToLineId: 'mck' },
+  { stationId: 'sok-18', transferToLineId: 'bolshaya-koltsevaya' },
+  { stationId: 'sok-26', transferToLineId: 'troitskaya' }
+];
+
+const createStation = (
+  id: string,
+  name: string,
+  lineId: string,
+  order: number,
+  transfers: string[] = []
+): MetroStation => ({
+  id,
+  name,
+  lineId,
+  order,
+  hasTransfer: transfers.length > 0,
+  transferTo: transfers.length ? transfers : undefined,
+});
+
 export const metroStations: MetroStation[] = [
+  createStation('d1-1', 'Одинцово', 'd1', 1),
+  createStation('d1-2', 'Баковка', 'd1', 2),
+  createStation('d1-3', 'Сколково', 'd1', 3),
+  createStation('d1-4', 'Немчиновка', 'd1', 4),
+  createStation('d1-5', 'Сетунь', 'd1', 5),
+  createStation('d1-6', 'Рабочий Посёлок', 'd1', 6),
+  createStation('d1-7', 'Кунцевская', 'd1', 7, ['filevskaya', 'bolshaya-koltsevaya', 'arbatsko-pokrovskaya']),
+  createStation('d1-8', 'Славянский бульвар', 'd1', 8, ['arbatsko-pokrovskaya']),
+  createStation('d1-9', 'Фили', 'd1', 9, ['filevskaya']),
+  createStation('d1-10', 'Тестовская', 'd1', 10, ['rublevo-arkhangelskaya', 'mck']),
+  createStation('d1-11', 'Беговая', 'd1', 11, ['tagansko-krasnopresnenskaya']),
+  createStation('d1-12', 'Белорусская', 'd1', 12, ['koltsevaya', 'zamoskvoretskaya', 'd4']),
+  createStation('d1-13', 'Савёловская', 'd1', 13, ['serpukhovsko-timiryazevskaya', 'bolshaya-koltsevaya', 'd4']),
+  createStation('d1-14', 'Тимирязевская', 'd1', 14, ['serpukhovsko-timiryazevskaya']),
+  createStation('d1-15', 'Петровско-Разумовская', 'd1', 15),
+  createStation('d1-16', 'Окружная', 'd1', 16, ['mck', 'lyublinsko-dmitrovskaya']),
+  createStation('d1-17', 'Дегунино', 'd1', 17),
+  createStation('d1-18', 'Бескудниково', 'd1', 18),
+  createStation('d1-19', 'Лианозово', 'd1', 19, ['lyublinsko-dmitrovskaya']),
+  createStation('d1-20', 'Марк', 'd1', 20),
+  createStation('d1-21', 'Новодачная', 'd1', 21),
+  createStation('d1-22', 'Долгопрудная', 'd1', 22),
+  createStation('d1-23', 'Водники', 'd1', 23),
+  createStation('d1-24', 'Хлебниково', 'd1', 24),
+  createStation('d1-25', 'Шереметьевская', 'd1', 25),
+  createStation('d1-26', 'Лобня', 'd1', 26),
+
   { id: 'sok-1', name: 'Бульвар Рокоссовского', lineId: 'sokolnicheskaya', hasTransfer: true, transferTo: ['mck'], order: 1 },
   { id: 'sok-2', name: 'Черкизовская', lineId: 'sokolnicheskaya', hasTransfer: true, transferTo: ['mck'], order: 2 },
   { id: 'sok-3', name: 'Преображенская площадь', lineId: 'sokolnicheskaya', hasTransfer: false, order: 3 },
@@ -66,7 +130,7 @@ export const metroStations: MetroStation[] = [
   { id: 'sok-23', name: 'Филатов Луг', lineId: 'sokolnicheskaya', hasTransfer: false, order: 23 },
   { id: 'sok-24', name: 'Прокшино', lineId: 'sokolnicheskaya', hasTransfer: false, order: 24 },
   { id: 'sok-25', name: 'Ольховая', lineId: 'sokolnicheskaya', hasTransfer: false, order: 25 },
-  { id: 'sok-26', name: 'Новомосковская', lineId: 'sokolnicheskaya', hasTransfer: false, order: 26 },
+  { id: 'sok-26', name: 'Новомосковская', lineId: 'sokolnicheskaya', hasTransfer: true, transferTo: ['troitskaya'], order: 26 },
   { id: 'sok-0', name: 'Потапово', lineId: 'sokolnicheskaya', hasTransfer: false, order: 27 },
 
   { id: 'zam-1', name: 'Ховрино', lineId: 'zamoskvoretskaya', hasTransfer: false, order: 1 },

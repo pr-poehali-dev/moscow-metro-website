@@ -167,7 +167,7 @@ export default function Index() {
         </div>
 
         <Tabs defaultValue="map" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="map">
               <Icon name="Map" size={16} className="mr-2" />
               Схема метро
@@ -175,10 +175,6 @@ export default function Index() {
             <TabsTrigger value="lines">
               <Icon name="GitBranch" size={16} className="mr-2" />
               Линии метро
-            </TabsTrigger>
-            <TabsTrigger value="stations">
-              <Icon name="MapPin" size={16} className="mr-2" />
-              Станции
             </TabsTrigger>
             <TabsTrigger value="info">
               <Icon name="Info" size={16} className="mr-2" />
@@ -292,48 +288,6 @@ export default function Index() {
             )}
           </TabsContent>
 
-          <TabsContent value="stations" className="space-y-4">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {stations.slice(0, 20).map(station => {
-                const line = metroLines.find(l => l.id === station.lineId);
-                return (
-                  <Card key={station.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: line?.color }} />
-                        <CardTitle className="text-base">{station.name}</CardTitle>
-                      </div>
-                      <CardDescription className="text-xs">{line?.name}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Icon name="Clock" size={14} className="text-muted-foreground" />
-                        <span className="text-xs">{station.openTime} - {station.closeTime}</span>
-                      </div>
-                      {station.hasTransfer && (
-                        <div className="flex items-center gap-2">
-                          <Icon name="Repeat2" size={14} className="text-primary" />
-                          <div className="flex gap-1">
-                            {station.transferTo?.map(transferLineId => {
-                              const transferLine = metroLines.find(l => l.id === transferLineId);
-                              return (
-                                <div 
-                                  key={transferLineId} 
-                                  className="w-3 h-3 rounded-full" 
-                                  style={{ backgroundColor: transferLine?.color }}
-                                  title={transferLine?.name}
-                                />
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </TabsContent>
 
           <TabsContent value="info" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
